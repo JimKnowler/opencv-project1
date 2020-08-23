@@ -1,11 +1,12 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture(0)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+def init_camera():
+    cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
-face_cascade = cv2.CascadeClassifier('./resources/haarcascade_frontalface_default.xml')
+    return cap
 
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
@@ -26,12 +27,25 @@ def get_largest_face(faces):
     else:
         return (True, faces[i])
 
-while True:
-    success, img = cap.read()
+def capture_image_from_camera(cap):
+    attempts = 0
+    while True:
+        success, img = cap.read()
 
-    if not success:
-        raise "unable to acquire image from video camera"
+        if success:
+            break
+        else:
+            attempts += 1
+            print('failed attempt ', attempts)
+            
+            if attempts > 3:
+                raise Exception("unable to acquire image from video camera")
+    
+    return img
 
+def process_frame(camera, face_cascade):
+    img = capture_image_from_camera(camera)
+        
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     faces = face_cascade.detectMultiScale(img_gray, 1.1, 4)
@@ -73,20 +87,29 @@ while True:
         radius = int(min(width, height)/2)
         cv2.circle(img_face_porthole, (int(width/2), int(height/2)), radius, (255,255,255), 3)
 
-        
-
     # combine images
-    img_blank = np.zeros_like(img)
-
     video_feeds = np.vstack((
         np.hstack((img, gray_to_bgr(img_gray), img_faces)),
         np.hstack((img_face_cropped, img_face, img_face_porthole))
     ))
+    
+    return video_feeds
 
-    cv2.imshow('opencv-project1', video_feeds)
+def main():
+    camera = init_camera()
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    face_cascade = cv2.CascadeClassifier('./resources/haarcascade_frontalface_default.xml')
 
-cv2.destroyAllWindows()
+    while True:
+        video_feeds = process_frame(camera, face_cascade)
 
+        cv2.imshow('opencv-project1', video_feeds)
+
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            # user has pressed 'q' to exit
+            break
+
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()

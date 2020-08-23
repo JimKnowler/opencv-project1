@@ -27,9 +27,13 @@ Requirements
 
 - $ python3 main.py
 
-## Hot Keys
+## Controls
 
 - q - quit
+- opencv window controls
+  - mouse-wheel / trackpad-two-fingers - zoom in/out
+  - left mouse drag - pan
+  - right mouse - view menu of options for pan/zoom
 
 # MacOS Catalina - Crash at startup
 
@@ -46,5 +50,8 @@ If python crashes when starting script:
     - tint colour of eyes
 - adjust zoom/tightness around face
     - zoom in/out keys
-
+- State machine 
+  - capture/choose
+  - review
+  - save
 
