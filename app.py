@@ -11,26 +11,12 @@ COLOUR_RECT_FACE_SELECTED = (0,0,255)
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
     return cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
-
-def get_largest_face(faces):
-    max_area = 0
-    index = -1
-    
-    for i, (_,_,w,h) in enumerate(faces):
-        area = w * h
-        if area > max_area:
-            index = i
-            max_area = area
-    
-    if -1 == index:
-        return (False, None)
-    else:
-        return (True, faces[i])
         
 class App:
     def __init__(self):
         self._cam = Camera()
         self._face_cascade = FaceCascade()
+        self._stabiliser = Stabiliser()
 
     def process_frame(self):
         img = self._cam.capture_image()
@@ -46,8 +32,7 @@ class App:
             x,y,w,h = face
             cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE, 2)
 
-        # find the largest face
-        has_face, face = get_largest_face(faces)
+        has_face, face = self._stabiliser.process(faces)
 
         img_face_cropped = np.zeros_like(img)
         
