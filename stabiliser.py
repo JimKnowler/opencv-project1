@@ -1,12 +1,19 @@
 class Stabiliser:
     def __init__(self):
-        pass
+        self._has_last_face = False
+        self._last_face = None
     
     def process(self, faces):
         if len(faces) == 0:
-            return (False, None)
+            if self._has_last_face:
+                return (True, self._last_face)
+            else:
+                return (False, None)
         
         face = self._get_largest_face(faces)
+
+        self._has_last_face = True
+        self._last_face = face
 
         return (True, face)
 

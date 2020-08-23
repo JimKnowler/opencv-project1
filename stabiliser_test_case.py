@@ -42,5 +42,11 @@ class StabiliserTestCase(unittest.TestCase):
         has_face, face = stabiliser.process(faces)
         self.assertTrue(has_face)
         self.assertTupleEqual(face, test_face_large)
-# process list of faces
-# return (success, stabilised face) .. just the bounding box
+
+    def test_should_persist_last_face_if_face_is_missing(self):
+        stabiliser = Stabiliser()
+        test_face1 = helper_make_face(0,0,100,100)
+        stabiliser.process([test_face1])
+        has_face, face = stabiliser.process([])
+        self.assertTrue(has_face)
+        self.assertTupleEqual(face, test_face1)

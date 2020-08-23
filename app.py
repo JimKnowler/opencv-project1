@@ -20,24 +20,25 @@ class App:
 
     def process_frame(self):
         img = self._cam.capture_image()
-
-        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        faces = self._face_cascade.get_faces(img_gray)
         
-        img_faces = gray_to_bgr(img_gray.copy())
+        
+
+        # detect all faces in a grayscale version of captured image
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        faces = self._face_cascade.get_faces(img_gray)
 
         # render rect around all faces in blue
+        img_faces = gray_to_bgr(img_gray.copy())
         for face in faces:
             x,y,w,h = face
             cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE, 2)
 
+        # use Stabiliser to decide where the face currently is in the image
         has_face, face = self._stabiliser.process(faces)
 
+        # create the cropped face image, resized face image + porthole image
         img_face_cropped = np.zeros_like(img)
-        
         if not has_face:
-            # todo: let stabiliser determine if there's no face
             img_face = np.zeros_like(img)
             img_face_porthole = np.zeros_like(img)
         else:
