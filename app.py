@@ -9,6 +9,7 @@ from porthole import Porthole
 COLOUR_RECT_FACE = (255,0,0)
 COLOUR_RECT_FACE_SELECTED = (0,0,255)
 COLOUR_RECT_PORTHOLE = (0,255,255)
+COLOUR_CIRCLE_PORTHOLE = (255,255,255)
 
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
@@ -60,22 +61,27 @@ class App:
             # rect around porthole in yellow
             cv2.rectangle(img_faces, (px,py), (px+pw, py+ph), COLOUR_RECT_PORTHOLE, 2)
 
-            # resize face
-            # **** todo: retain square shape of porthole
+            # resize porthole-face to full size square
             width = img.shape[1]
             height = img.shape[0]
-            img_face = cv2.resize(img[py:py+ph, px:px+pw], (width, height))
+            square_width = min(width,height)
+            img_face_box = cv2.resize(img[py:py+ph, px:px+pw], (square_width, square_width))
 
-            # add porthole  
+            # add border around square to create image with same dimensions as image from camera
+            bx = int((width - square_width) / 2)
+            by = int((height - square_width) / 2)
+            img_face = cv2.copyMakeBorder(img_face_box, by, by, bx, bx, cv2.BORDER_CONSTANT, (0,0,0))
+
+            # add circle around porthole  
             img_face_porthole = img_face.copy()
             radius = int(min(width, height)/2)
-            cv2.circle(img_face_porthole, (int(width/2), int(height/2)), radius, (255,255,255), 3)
+            cv2.circle(img_face_porthole, (int(width/2), int(height/2)), radius, COLOUR_CIRCLE_PORTHOLE, 3)
 
-        # combine images
-        video_feeds = np.vstack((
+        # combine images into a video wall that shows stages of processing
+        video_wall = np.vstack((
             np.hstack((img, gray_to_bgr(img_gray), img_faces)),
             np.hstack((img_face_cropped, img_face, img_face_porthole))
         ))
         
-        return video_feeds
+        return video_wall
     

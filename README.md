@@ -61,4 +61,7 @@ If python crashes when starting script:
 - Stabiliser
   - basic low pass filter on each of x,y,w,h to reduce jittering of window
   - track multiple face areas, and precent rapid switching between faces
+- resize
+  - experiment with different resize algorithms - nearest, linear, bicubic, lancosz
+- apply mask to final 'porthole' image, to cut away the extra material around the porthole
 
