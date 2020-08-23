@@ -3,13 +3,9 @@ import cv2
 
 class Camera:
     def __init__(self, width = 640, height = 480):
-        self.width = width
-        self.height = height
-
-    def init(self):
         cap = cv2.VideoCapture(0)
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.width)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.height)
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
         self.cap = cap
 
