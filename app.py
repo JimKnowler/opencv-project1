@@ -4,9 +4,11 @@ import cv2
 from camera import Camera
 from stabiliser import Stabiliser
 from face_cascade import FaceCascade
+from porthole import Porthole
 
 COLOUR_RECT_FACE = (255,0,0)
 COLOUR_RECT_FACE_SELECTED = (0,0,255)
+COLOUR_RECT_PORTHOLE = (0,255,255)
 
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
@@ -17,11 +19,12 @@ class App:
         self._cam = Camera()
         self._face_cascade = FaceCascade()
         self._stabiliser = Stabiliser()
+        porthole = Porthole()
+        porthole.set_padding(10)
+        self._porthole = porthole
 
     def process_frame(self):
         img = self._cam.capture_image()
-        
-        
 
         # detect all faces in a grayscale version of captured image
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -42,20 +45,26 @@ class App:
             img_face = np.zeros_like(img)
             img_face_porthole = np.zeros_like(img)
         else:
-            # copy the detected face to a separate image
             x,y,w,h = face
 
             # rect around selected face in red
-            # todo: feed this to stabiliser and render output of stabiliser in red
             cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE_SELECTED, 2)
-            
-            # copy the area of the face
-            img_face_cropped[y:y+h, x:x+w] = img[y:y+h, x:x+w]
+
+            # get the porthole for the face
+            self._porthole.set_face(face)
+            px, py, pw, ph = self._porthole.get_bounding_box()
+
+            # copy the area of the porthole bounding box
+            img_face_cropped[py:py+ph, px:px+pw] = img[py:py+ph, px:px+pw]
+
+            # rect around porthole in yellow
+            cv2.rectangle(img_faces, (px,py), (px+pw, py+ph), COLOUR_RECT_PORTHOLE, 2)
 
             # resize face
+            # **** todo: retain square shape of porthole
             width = img.shape[1]
             height = img.shape[0]
-            img_face = cv2.resize(img[y:y+h, x:x+w], (width, height))
+            img_face = cv2.resize(img[py:py+ph, px:px+pw], (width, height))
 
             # add porthole  
             img_face_porthole = img_face.copy()
