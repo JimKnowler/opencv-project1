@@ -3,6 +3,7 @@ import cv2
 
 from camera import Camera
 from stabiliser import Stabiliser
+from face_cascade import FaceCascade
 
 COLOUR_RECT_FACE = (255,0,0)
 COLOUR_RECT_FACE_SELECTED = (0,0,255)
@@ -29,18 +30,18 @@ def get_largest_face(faces):
 class App:
     def __init__(self):
         self.cam = Camera()
-        self.face_cascade = cv2.CascadeClassifier('./resources/haarcascade_frontalface_default.xml')
+        self.face_cascade = FaceCascade()
 
     def process_frame(self):
         img = self.cam.capture_image()
-        
+
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        faces = self.face_cascade.detectMultiScale(img_gray, 1.1, 4)
+        faces = self.face_cascade.get_faces(img_gray)
         
         img_faces = gray_to_bgr(img_gray.copy())
 
-        # rect around all faces in blue
+        # render rect around all faces in blue
         for face in faces:
             x,y,w,h = face
             cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE, 2)
