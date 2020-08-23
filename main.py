@@ -1,12 +1,6 @@
 import numpy as np
 import cv2
-
-def init_camera():
-    cap = cv2.VideoCapture(0)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
-    return cap
+import camera
 
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
@@ -27,24 +21,8 @@ def get_largest_face(faces):
     else:
         return (True, faces[i])
 
-def capture_image_from_camera(cap):
-    attempts = 0
-    while True:
-        success, img = cap.read()
-
-        if success:
-            break
-        else:
-            attempts += 1
-            print('failed attempt ', attempts)
-            
-            if attempts > 3:
-                raise Exception("unable to acquire image from video camera")
-    
-    return img
-
-def process_frame(camera, face_cascade):
-    img = capture_image_from_camera(camera)
+def process_frame(cam, face_cascade):
+    img = cam.capture_image()
         
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -96,12 +74,13 @@ def process_frame(camera, face_cascade):
     return video_feeds
 
 def main():
-    camera = init_camera()
+    cam = camera.Camera()
+    cam.init()
 
     face_cascade = cv2.CascadeClassifier('./resources/haarcascade_frontalface_default.xml')
 
     while True:
-        video_feeds = process_frame(camera, face_cascade)
+        video_feeds = process_frame(cam, face_cascade)
 
         cv2.imshow('opencv-project1', video_feeds)
 
