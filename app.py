@@ -6,6 +6,9 @@ from stabiliser import Stabiliser
 from face_cascade import FaceCascade
 from porthole import Porthole
 
+IMAGE_WIDTH = 640
+IMAGE_HEIGHT = 480
+
 COLOUR_RECT_FACE = (255,0,0)
 COLOUR_RECT_FACE_SELECTED = (0,0,255)
 COLOUR_RECT_PORTHOLE = (0,255,255)
@@ -17,10 +20,10 @@ def gray_to_bgr(img):
         
 class App:
     def __init__(self):
-        self._cam = Camera()
+        self._cam = Camera(IMAGE_WIDTH, IMAGE_HEIGHT)
         self._face_cascade = FaceCascade()
         self._stabiliser = Stabiliser()
-        porthole = Porthole()
+        porthole = Porthole(IMAGE_WIDTH, IMAGE_HEIGHT)
         porthole.set_padding(10)
         self._porthole = porthole
 
