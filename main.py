@@ -45,25 +45,42 @@ while True:
 
     # find the largest face
     has_face, face = get_largest_face(faces)
+
+    img_face_cropped = np.zeros_like(img)
     
     if not has_face:
+        # todo: let stabiliser determine if there's no face
         img_face = np.zeros_like(img)
+        img_face_porthole = np.zeros_like(img)
     else:
         # copy the detected face to a separate image
         x,y,w,h = face
-        img_face_cropped = img[y:y+h, x:x+w]
-        img_face = cv2.resize(img_face_cropped, (img.shape[1], img.shape[0]))
 
         # rect around selected face in red
         # todo: feed this to stabiliser and render output of stabiliser in red
         cv2.rectangle(img_faces, (x,y), (x+w, y+h), (0,0,255), 2)
+        
+        # copy the area of the face
+        img_face_cropped[y:y+h, x:x+w] = img[y:y+h, x:x+w]
+
+        # resize face
+        width = img.shape[1]
+        height = img.shape[0]
+        img_face = cv2.resize(img[y:y+h, x:x+w], (width, height))
+
+        # add porthole  
+        img_face_porthole = img_face.copy()
+        radius = int(min(width, height)/2)
+        cv2.circle(img_face_porthole, (int(width/2), int(height/2)), radius, (255,255,255), 3)
+
+        
 
     # combine images
     img_blank = np.zeros_like(img)
 
     video_feeds = np.vstack((
         np.hstack((img, gray_to_bgr(img_gray), img_faces)),
-        np.hstack((img_blank, img_blank, img_blank))
+        np.hstack((img_face_cropped, img_face, img_face_porthole))
     ))
 
     cv2.imshow('opencv-project1', video_feeds)
