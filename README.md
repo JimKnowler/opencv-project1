@@ -58,4 +58,7 @@ If python crashes when starting script:
   - capture/choose
   - review
   - save
+- Stabiliser
+  - basic low pass filter on each of x,y,w,h to reduce jittering of window
+  - track multiple face areas, and precent rapid switching between faces
 
