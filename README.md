@@ -27,6 +27,10 @@ Requirements
 
 - $ python3 main.py
 
+## Execute Unit Tests
+
+- $ python3 test.py
+
 ## Controls
 
 - q - quit

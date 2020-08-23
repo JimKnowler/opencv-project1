@@ -1,6 +1,11 @@
 import numpy as np
 import cv2
+
 from camera import Camera
+from stabiliser import Stabiliser
+
+COLOUR_RECT_FACE = (255,0,0)
+COLOUR_RECT_FACE_SELECTED = (0,0,255)
 
 def gray_to_bgr(img):
     # convert 1 channel grayscale to 3 channel BGR
@@ -38,7 +43,7 @@ class App:
         # rect around all faces in blue
         for face in faces:
             x,y,w,h = face
-            cv2.rectangle(img_faces, (x,y), (x+w, y+h), (255,0,0), 2)
+            cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE, 2)
 
         # find the largest face
         has_face, face = get_largest_face(faces)
@@ -55,7 +60,7 @@ class App:
 
             # rect around selected face in red
             # todo: feed this to stabiliser and render output of stabiliser in red
-            cv2.rectangle(img_faces, (x,y), (x+w, y+h), (0,0,255), 2)
+            cv2.rectangle(img_faces, (x,y), (x+w, y+h), COLOUR_RECT_FACE_SELECTED, 2)
             
             # copy the area of the face
             img_face_cropped[y:y+h, x:x+w] = img[y:y+h, x:x+w]
