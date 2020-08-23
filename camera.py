@@ -7,12 +7,12 @@ class Camera:
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
-        self.cap = cap
+        self._cap = cap
 
     def capture_image(self):
         attempts = 0
         while True:
-            success, img = self.cap.read()
+            success, img = self._cap.read()
 
             if success:
                 break

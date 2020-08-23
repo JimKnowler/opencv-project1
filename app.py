@@ -29,15 +29,15 @@ def get_largest_face(faces):
         
 class App:
     def __init__(self):
-        self.cam = Camera()
-        self.face_cascade = FaceCascade()
+        self._cam = Camera()
+        self._face_cascade = FaceCascade()
 
     def process_frame(self):
-        img = self.cam.capture_image()
+        img = self._cam.capture_image()
 
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        faces = self.face_cascade.get_faces(img_gray)
+        faces = self._face_cascade.get_faces(img_gray)
         
         img_faces = gray_to_bgr(img_gray.copy())
 
