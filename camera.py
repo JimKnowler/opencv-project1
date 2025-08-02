@@ -1,9 +1,17 @@
 import cv2
 
+import platform
+def is_windows():
+    return any(platform.win32_ver())
+
 
 class Camera:
     def __init__(self, width = 640, height = 480):
-        cap = cv2.VideoCapture(0)
+        if is_windows():
+            cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        else:
+            cap = cv2.VideoCapture(0)
+            
         cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
         cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 
