@@ -4,11 +4,16 @@ import platform
 def is_windows():
     return any(platform.win32_ver())
 
+def is_macos():
+    return any(platform.mac_ver())
+
 
 class Camera:
     def __init__(self, width = 640, height = 480):
         if is_windows():
             cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        elif is_macos():
+            cap = cv2.VideoCapture(1)    
         else:
             cap = cv2.VideoCapture(0)
             
